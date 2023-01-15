@@ -1,0 +1,13 @@
+.header-buttons{
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+  padding-top: 20px;
+}
+
+.header-button{
+  padding: 15px 20px;
+  border: 1px solid grey;
+  text-decoration: none;
+  font-size: 20px;
+}

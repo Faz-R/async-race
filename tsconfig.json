@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "target": "es5",
+    "allowJs": true,
+    "strict": true
+  },
+  "files": ["src/pages/main/main.ts"],
+}
