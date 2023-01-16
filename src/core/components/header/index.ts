@@ -4,11 +4,11 @@ import { PageIds } from '../../../pages/app/index';
 const Buttons = [
   {
     id: PageIds.GaragePage,
-    text: 'Garage Page'
+    text: 'Garage'
   },
   {
     id: PageIds.WinnersPage,
-    text: 'Winners Page'
+    text: 'Winners'
   }
 ]
 
@@ -24,7 +24,7 @@ class Header extends Components {
       const buttonHTML = document.createElement('a');
       buttonHTML.href = `#${button.id}`;
       buttonHTML.innerText = button.text;
-      buttonHTML.className = 'header-button';
+      buttonHTML.className = 'header-button button';
       pageButtons.append(buttonHTML);
     })
     this.container.append(pageButtons);

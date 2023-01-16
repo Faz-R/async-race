@@ -4,8 +4,8 @@ import WinnersPage from '../winners/index';
 import Header from '../../core/components/header/index'
 
 export const enum PageIds {
-  GaragePage = 'garage-page',
-  WinnersPage = 'winners-page',
+  GaragePage = 'garage',
+  WinnersPage = 'winners',
 }
 
 class App {
@@ -33,6 +33,7 @@ class App {
 
     if (page) {
       const pageHTML = page.render();
+      page.listen(pageHTML);
       pageHTML.id = App.defaultPageId;
       App.container.append(pageHTML)
     }
@@ -46,13 +47,13 @@ class App {
   }
 
   constructor() {
-    this.initialPage = new GaragePage('garage-page');
+    this.initialPage = new GaragePage('garage');
     this.header = new Header('header', 'header')
   }
 
   run() {
     App.container.append(this.header.render())
-    App.renderNewPage('garage-page');
+    App.renderNewPage('garage');
     this.enableRouteChange();
   }
 }

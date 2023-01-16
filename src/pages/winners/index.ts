@@ -3,7 +3,7 @@ import Page from '../../core/templates/pages';
 class WinnersPage extends Page {
 
   static TextObject = {
-    WinnersTitle: 'Winners page',
+    WinnersTitle: 'Winners',
   };
 
   constructor(id: string) {
@@ -11,8 +11,8 @@ class WinnersPage extends Page {
   }
 
   render() {
-    const title = this.createHeaderTitle(WinnersPage.TextObject.WinnersTitle);
-    this.container.append(title);
+    const title = WinnersPage.TextObject.WinnersTitle;
+    this.container.innerHTML = `<h1>${title}<h1>`;
     return this.container;
   }
 }
