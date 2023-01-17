@@ -1,10 +1,10 @@
-export interface IState {
-  id?: number
-}
+// export interface IState {
+//   id?: number
+// }
 
-export interface IAnimState {
-  id: IState;
-}
+// export interface IAnimState extends IState {
+//   id: number
+// }
 
 export interface ICar {
   id: number,

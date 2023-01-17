@@ -1,3 +1,13 @@
+.pagination{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 0.5em;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
 .block{
   display: flex;
   flex-direction: row; 

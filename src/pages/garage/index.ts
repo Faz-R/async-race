@@ -1,10 +1,17 @@
 import Page from '../../core/templates/pages';
-import carsInfo from '../../scripts/store';
+import store from '../../scripts/store';
 import UI, { updateStateGarage } from '../../scripts/UI';
-import { createCar, updateCar, deleteCar, startEngine } from '../../scripts/api';
-import App from '../app/index';
+import { createCar, updateCar, deleteCar, startEngine, getCars } from '../../scripts/api';
 
 let formUpdateLock = true;
+
+let nextPage = true;
+let prevPage = true;
+const maxPages = Math.ceil(Number(store.carsCount) / 7);
+
+if (store.carsPage < maxPages) {
+  nextPage = false;
+}
 
 class GaragePage extends Page {
 
@@ -35,8 +42,12 @@ class GaragePage extends Page {
       <button class="button recet-button">recet</button>
       <button class="button generate-button">generate cars</button>
     </div>
-    <h1>${title} (${carsInfo.carsCount})</h1>
-    <h3>Page: ${carsInfo.carsPage}</h3>
+    <h1>${title} (${store.carsCount})</h1>
+    <div class='pagination'>
+      <button class='page-prev button' ${prevPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>
+      <div>Page: ${store.carsPage}</div>
+      <button class='page-next button' ${nextPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
     ${UI.renderGarage()}
     `;
     return this.container;
@@ -58,13 +69,37 @@ class GaragePage extends Page {
           id = Number((<HTMLElement>parent).id.replace('select-car-', ''));
           formUpdateLock = false;
           this.render();
-
         }
         if ((<HTMLElement>parent).className.includes('start-button')) {
           id = Number((<HTMLElement>parent).id.replace('start-engine-car-', ''));
-          const res = await startEngine(id);
-          console.log(res)
-
+          await UI.startDriving(id);
+        }
+        if ((<HTMLElement>parent).className.includes('stop-button')) {
+          id = Number((<HTMLElement>parent).id.replace('stop-engine-car-', ''));
+          await UI.stopDriving(id);
+        }
+        if ((<HTMLElement>parent).className.includes('page-next')) {
+          const maxPages = Math.ceil(Number(store.carsCount) / 7)
+          if (store.carsPage < maxPages) {
+            prevPage = false;
+            store.carsPage = store.carsPage + 1;
+            if (store.carsPage === maxPages) {
+              nextPage = true;
+            }
+            await updateStateGarage();
+            this.render();
+          }
+        }
+        if ((<HTMLElement>parent).className.includes('page-prev')) {
+          if (store.carsPage > 1) {
+            nextPage = false;
+            store.carsPage = store.carsPage - 1;
+            if (store.carsPage === 1) {
+              prevPage = true;
+            }
+            await updateStateGarage();
+            this.render();
+          }
         }
       }
     })

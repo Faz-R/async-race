@@ -1,5 +1,4 @@
 import store from './store';
-import { IState } from './interfaces';
 
 function getPositionAtCenter(element: HTMLElement) {
   const { top, left, width, height } = element.getBoundingClientRect();
@@ -18,10 +17,10 @@ export function getDistanceBetweenElements(a: HTMLElement, b: HTMLElement) {
 
 export function animation(car: HTMLElement, distance: number, animationTime: number) {
   let start = 0;
-  const state = <IState>{};
+  const state = <any>{};
 
   function step(timestamp: number) {
-    if (!start) start = timestamp;
+    if (!start) { start = timestamp; }
     const time = timestamp - start;
     const passed = Math.round(time * (distance / animationTime));
     car.style.transform = `translateX(${Math.min(passed, distance)}px)`;
