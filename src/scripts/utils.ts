@@ -1,4 +1,5 @@
 import store from './store';
+import { ICar } from './interfaces';
 
 function getPositionAtCenter(element: HTMLElement) {
   const { top, left, width, height } = element.getBoundingClientRect();
@@ -53,3 +54,23 @@ const getRandomColor = () => {
 }
 
 export const generateRandomCars = (count = 100) => new Array(count).fill(1).map(_ => ({ name: getRandomName(), color: getRandomColor() }));
+
+export const raceAll = async (promises: any, ids: number[]): Promise<any> => {
+  const { success, id, time } = await Promise.race(promises);
+
+  if (!success) {
+    const failedIndex = ids.findIndex(i => i === id);
+    const restPromises = [...promises.slice(0, failedIndex), ...promises.slice(failedIndex + 1, promises.length)];
+    const restIds = [...ids.slice(0, failedIndex), ...ids.slice(failedIndex + 1, ids.length)];
+
+    return raceAll(restPromises, restIds);
+  }
+
+  return { ...store.cars.find((car: ICar) => car.id === id), time: +(time / 1000).toFixed(2) }
+}
+
+export const race = async (action: any) => {
+  const promises = store.cars.map(({ id }: { id: number }) => action(id));
+  const winner = await raceAll(promises, store.cars.map((car: ICar) => car.id));
+  return winner;
+}

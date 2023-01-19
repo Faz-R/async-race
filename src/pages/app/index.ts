@@ -52,8 +52,9 @@ class App {
   }
 
   run() {
+    const hash = window.location.hash.slice(1);
     App.container.append(this.header.render())
-    App.renderNewPage('garage');
+    App.renderNewPage(hash ? hash : 'garage');
     this.enableRouteChange();
   }
 }

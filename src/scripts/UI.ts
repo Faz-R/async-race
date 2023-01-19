@@ -1,4 +1,4 @@
-import { getCar, createCar, deleteCar, getCars, updateCar, startEngine, stopEngine, drive } from "./api";
+import { getCar, createCar, deleteCar, getCars, updateCar, startEngine, stopEngine, drive, getWinners } from "./api";
 import store from './store';
 import { getDistanceBetweenElements, animation } from './utils';
 import { ICar } from './interfaces';
@@ -84,9 +84,18 @@ const stopDriving = async (id: number) => {
   if (store.animation[id]) window.cancelAnimationFrame(store.animation[id].id)
 }
 
+const updateStateWinners = async () => {
+  const { items, count } = await getWinners({ page: store.winnersPage, sort: store.sortBy, order: store.sortOrder });
+  store.winners = items;
+  store.winnersCount = count;
+
+}
+
 
 export default {
   renderGarage,
   startDriving,
-  stopDriving
+  stopDriving,
+  renderCarImage,
+  updateStateWinners
 }

@@ -1,7 +1,8 @@
 import Page from '../../core/templates/pages';
 import store from '../../scripts/store';
+import { generateRandomCars, race } from '../../scripts/utils';
 import UI, { updateStateGarage } from '../../scripts/UI';
-import { createCar, updateCar, deleteCar, startEngine, getCars } from '../../scripts/api';
+import { createCar, updateCar, deleteCar, startEngine, getCars, saveWinner, deleteWinner } from '../../scripts/api';
 
 let formUpdateLock = true;
 
@@ -27,6 +28,7 @@ class GaragePage extends Page {
     const title = GaragePage.TextObject.GarageTitle;
     this.container.innerHTML =
       `
+    <div class='message-block' id='message'></div>
     <form class="create-block block">
       <input type='text' class='input create-text' name='form-text'>
       <input type='color' class='input input-color create-color' name='form-color'>
@@ -38,8 +40,8 @@ class GaragePage extends Page {
       <button class="button update-button" ${formUpdateLock ? 'disabled' : ''}>update</button>
     </form>
     <div class="race-block block">
-      <button class="button race-button">race</button>
-      <button class="button recet-button">recet</button>
+      <button class="button race-button" id="race">race</button>
+      <button class="button reset-button" id="reset" disabled=true>reset</button>
       <button class="button generate-button">generate cars</button>
     </div>
     <h1>${title} (${store.carsCount})</h1>
@@ -58,11 +60,14 @@ class GaragePage extends Page {
     let id: number;
     page.addEventListener('click', async (e) => {
       const parent = (<HTMLElement>e.target).parentNode;
+      const element = (<HTMLElement>e.target);
       if (parent) {
         if ((<HTMLElement>parent).className.includes('remove-button')) {
           const id = Number((<HTMLElement>parent).id.replace('remove-car-', ''));
           await deleteCar(id);
+          await deleteWinner(id);
           await updateStateGarage();
+          await UI.updateStateWinners();
           this.render();
         }
         if ((<HTMLElement>parent).className.includes('select-button')) {
@@ -100,6 +105,38 @@ class GaragePage extends Page {
             await updateStateGarage();
             this.render();
           }
+        }
+      }
+      if (element) {
+        if (element.className.includes('generate-button')) {
+          const cars = generateRandomCars();
+          cars.forEach(async (e) => {
+            await createCar(e);
+            await updateStateGarage();
+            this.render();
+          })
+        }
+        if (element.className.includes('race-button')) {
+          (<HTMLButtonElement>element).disabled = true;
+
+          const winner = await race(UI.startDriving);
+          await saveWinner(winner);
+          await UI.updateStateWinners();
+          const message = document.getElementById('message');
+          if (message) {
+            message.innerHTML = `${winner.name} went first ${winner.time}s!`;
+            message.classList.toggle('visible', true);
+          }
+
+          (<HTMLButtonElement>document.getElementById('reset')).disabled = false;
+        }
+        if (element.className.includes('reset-button')) {
+          (<HTMLButtonElement>element).disabled = true;
+          store.cars.map(({ id }: { id: number }) => UI.stopDriving(id));
+          const message = document.getElementById('message');
+          message?.classList.toggle('visible', false);
+          (<HTMLButtonElement>document.getElementById('race')).disabled = false;
+
         }
       }
     })

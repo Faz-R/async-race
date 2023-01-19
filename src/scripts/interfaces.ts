@@ -12,3 +12,13 @@ export interface ICar {
   color: string,
   isEngineStarted: boolean
 }
+
+export interface IWinner {
+  id: number,
+  body: ICar,
+  time: number
+}
+
+export type ISort = 'id' | 'wins' | 'time';
+
+export type IOrder = 'ASC' | 'DESC';
