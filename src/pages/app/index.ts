@@ -1,4 +1,3 @@
-import Page from '../../core/templates/pages';
 import GaragePage from '../garage/index';
 import WinnersPage from '../winners/index';
 import Header from '../../core/components/header/index'
@@ -11,43 +10,53 @@ export const enum PageIds {
 class App {
   private static container: HTMLElement = document.body;
 
-  private static defaultPageId = 'current-page';
-
-  private initialPage: GaragePage;
-
   private header: Header;
 
   static renderNewPage(idPage: string) {
-    const currentPageHTML = document.getElementById(`${App.defaultPageId}`);
-    if (currentPageHTML) {
-      currentPageHTML.remove();
+
+    const garagePage = new GaragePage();
+    const garageHTML = garagePage.render();
+    garageHTML.id = 'garage';
+    garagePage.listen(garageHTML);
+    App.container.append(garageHTML)
+
+    const winnersPage = new WinnersPage()
+    const winnersHTML = winnersPage.render();
+    winnersHTML.id = 'winners';
+    winnersPage.listen(winnersHTML);
+    App.container.append(winnersHTML);
+
+    if (idPage) {
+      if (idPage === 'garage') {
+        (<HTMLElement>document.getElementById(`winners`)).style.display = 'none';
+      } else {
+        (<HTMLElement>document.getElementById(`garage`)).style.display = 'none';
+      }
+    } else {
+      winnersHTML.style.display = 'none';
     }
 
-    let page: Page | null = null;
+  }
 
-    if (idPage === PageIds.GaragePage) {
-      page = new GaragePage(idPage)
-    } else if (idPage === PageIds.WinnersPage) {
-      page = new WinnersPage(idPage)
+  static hiddenPage(idPage: string) {
+    if (idPage === 'garage') {
+      (<HTMLElement>document.getElementById(`winners`)).style.display = 'none';
+      (<HTMLElement>document.getElementById(`garage`)).style.display = 'block';
+    } else {
+      (<HTMLElement>document.getElementById(`winners`)).style.display = 'block';
+      (<HTMLElement>document.getElementById(`garage`)).style.display = 'none';
     }
 
-    if (page) {
-      const pageHTML = page.render();
-      page.listen(pageHTML);
-      pageHTML.id = App.defaultPageId;
-      App.container.append(pageHTML)
-    }
   }
 
   private enableRouteChange() {
     window.addEventListener('hashchange', () => {
       const hash = window.location.hash.slice(1);
-      App.renderNewPage(hash);
+      App.hiddenPage(hash);
     })
   }
 
   constructor() {
-    this.initialPage = new GaragePage('garage');
     this.header = new Header('header', 'header')
   }
 

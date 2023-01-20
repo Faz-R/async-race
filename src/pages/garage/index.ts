@@ -2,7 +2,7 @@ import Page from '../../core/templates/pages';
 import store from '../../scripts/store';
 import { generateRandomCars, race } from '../../scripts/utils';
 import UI, { updateStateGarage } from '../../scripts/UI';
-import { createCar, updateCar, deleteCar, startEngine, getCars, saveWinner, deleteWinner } from '../../scripts/api';
+import { createCar, updateCar, deleteCar, saveWinner, deleteWinner } from '../../scripts/api';
 
 let formUpdateLock = true;
 
@@ -19,10 +19,6 @@ class GaragePage extends Page {
   static TextObject = {
     GarageTitle: 'Garage',
   };
-
-  constructor(id: string) {
-    super(id)
-  }
 
   render() {
     const title = GaragePage.TextObject.GarageTitle;
@@ -46,9 +42,9 @@ class GaragePage extends Page {
     </div>
     <h1>${title} (${store.carsCount})</h1>
     <div class='pagination'>
-      <button class='page-prev button' ${prevPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>
+      <button class='page-prev button' ${prevPage ? 'disabled' : ''} id='prev-garage-page'><i class="fa-solid fa-chevron-left"></i></button>
       <div>Page: ${store.carsPage}</div>
-      <button class='page-next button' ${nextPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>
+      <button class='page-next button' ${nextPage ? 'disabled' : ''} id='next-garage-page'><i class="fa-solid fa-chevron-right"></i></button>
     </div>
     ${UI.renderGarage()}
     `;
@@ -110,6 +106,7 @@ class GaragePage extends Page {
       if (element) {
         if (element.className.includes('generate-button')) {
           const cars = generateRandomCars();
+          nextPage = false;
           cars.forEach(async (e) => {
             await createCar(e);
             await updateStateGarage();

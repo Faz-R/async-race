@@ -3,12 +3,12 @@ import store from '../../scripts/store';
 import UI from '../../scripts/UI';
 import { ISort, IOrder } from '../../scripts/interfaces';
 
-let nextPage = true;
+let nextPage = false;
 let prevPage = true;
 
 const maxPages = Math.ceil(Number(store.winnersCount) / 10)
-if (store.winnersPage < maxPages) {
-  nextPage = false;
+if (store.winnersPage >= maxPages) {
+  nextPage = true;
 }
 
 
@@ -17,10 +17,6 @@ class WinnersPage extends Page {
   static TextObject = {
     WinnersTitle: 'Winners',
   };
-
-  constructor(id: string) {
-    super(id)
-  }
 
   render() {
     const title = WinnersPage.TextObject.WinnersTitle;
@@ -36,21 +32,19 @@ class WinnersPage extends Page {
         <th class='table-col-head' id='sort-by-id'>№</th>
         <th class='table-col-head'>Car</th>
         <th class='table-col-head'>Name</th>
-        <th class='table-col-head col-wins 
-          ${store.sortBy === 'wins' ? store.sortOrder : ''}'  
-          id='sort-by-wins'>Wins 
+        <th class='table-col-head col-wins' id='sort-by-wins'>
+          Wins 
           ${store.sortBy === 'wins' ? store.sortOrder === 'DESC' ? '▼' : '▲' : ''}
         </th>
-        <th class='table-col-head col-time 
-          ${store.sortBy === 'time' ? store.sortOrder : ''}' 
-          id='sort-by-time'>Best time(s) 
+        <th class='table-col-head col-time' id='sort-by-time'>
+          Best time(s) 
           ${store.sortBy === 'time' ? store.sortOrder === 'DESC' ? '▼' : '▲' : ''}
         </th>
       </tr>
       <tbody>
       ${store.winners.map((winner, index) =>
       `<tr class='table-row'>
-        <td class='table-col'>${index + 1}</td>
+        <td class='table-col'>${index + 1 + ((store.winnersPage - 1) * 10)}</td>
         <td class='table-col col-img'>${UI.renderCarImage(winner.car.color)}</td>
         <td class='table-col'>${winner.car.name}</td>
         <td class='table-col'>${winner.wins}</td>

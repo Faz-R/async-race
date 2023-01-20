@@ -4,9 +4,8 @@ abstract class Page {
 
   };
 
-  constructor(id: string) {
+  constructor() {
     this.container = document.createElement('div');
-    this.container.id = id;
   }
 
   render() {
