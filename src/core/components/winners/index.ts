@@ -2,13 +2,13 @@ import Page from '../../templates/pages';
 import store from '../../../scripts/store';
 import UI from '../../../scripts/UI';
 
-let nextPage = false;
-let prevPage = true;
+// let nextPage = false;
+// let prevPage = true;
 
-const maxPages = Math.ceil(Number(store.winnersCount) / 10)
-if (store.winnersPage >= maxPages) {
-  nextPage = true;
-}
+// const maxPages = Math.ceil(Number(store.winnersCount) / 10)
+// if (store.winnersPage >= maxPages) {
+//   nextPage = true;
+// }
 
 class WinnersPage extends Page {
 
@@ -16,14 +16,21 @@ class WinnersPage extends Page {
     WinnersTitle: 'Winners',
   };
 
+  nextPage = false;
+  prevPage = true;
+  maxPages = Math.ceil(Number(store.winnersCount) / 10);
+
   render() {
+    if (store.winnersPage >= this.maxPages) {
+      this.nextPage = true;
+    }
     const title = WinnersPage.TextObject.WinnersTitle;
     this.container.innerHTML = `
     <h1>${title} (${store.winnersCount})</h1>
     <div class='pagination'>
-      <button class='page-prev button' ${prevPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>
+      <button class='page-prev button' ${this.prevPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>
       <div>Page: ${store.winnersPage}</div>
-      <button class='page-next button' ${nextPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>
+      <button class='page-next button' ${this.nextPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>
     </div>
     <table class='table'>
       <tr class='table-row head-row'>
@@ -60,11 +67,11 @@ class WinnersPage extends Page {
       const parent = (<HTMLElement>e.target).parentNode;
       const element = (<HTMLElement>e.target);
       if ((<HTMLElement>parent).className.includes('page-next')) {
-        if (store.winnersPage < maxPages) {
-          prevPage = false;
+        if (store.winnersPage < this.maxPages) {
+          this.prevPage = false;
           store.winnersPage = store.winnersPage + 1;
-          if (store.winnersPage === maxPages) {
-            nextPage = true;
+          if (store.winnersPage === this.maxPages) {
+            this.nextPage = true;
           }
           await UI.updateStateWinners();
           this.render();
@@ -72,10 +79,10 @@ class WinnersPage extends Page {
       }
       if ((<HTMLElement>parent).className.includes('page-prev')) {
         if (store.winnersPage > 1) {
-          nextPage = false;
+          this.nextPage = false;
           store.winnersPage = store.winnersPage - 1;
           if (store.winnersPage === 1) {
-            prevPage = true;
+            this.prevPage = true;
           }
           await UI.updateStateWinners();
           this.render();

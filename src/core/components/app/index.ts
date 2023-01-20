@@ -8,11 +8,15 @@ class App {
   private header: Header;
 
   static updateWinners() {
+    const hash = window.location.hash.slice(1);
     (document.getElementById('winners')?.remove());
     const winnersPage = new WinnersPage();
     const winnersHTML = winnersPage.render();
     winnersHTML.id = 'winners';
-    winnersHTML.style.display = 'none';
+    console.log(hash)
+    if (hash === 'garage') {
+      winnersHTML.style.display = 'none';
+    }
     winnersPage.listen(winnersHTML);
     App.container.append(winnersHTML);
 
