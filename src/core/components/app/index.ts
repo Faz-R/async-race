@@ -1,16 +1,22 @@
 import GaragePage from '../garage/index';
 import WinnersPage from '../winners/index';
-import Header from '../../core/components/header/index'
-
-export const enum PageIds {
-  GaragePage = 'garage',
-  WinnersPage = 'winners',
-}
+import Header from '../header/index'
 
 class App {
   private static container: HTMLElement = document.body;
 
   private header: Header;
+
+  static updateWinners() {
+    (document.getElementById('winners')?.remove());
+    const winnersPage = new WinnersPage();
+    const winnersHTML = winnersPage.render();
+    winnersHTML.id = 'winners';
+    winnersHTML.style.display = 'none';
+    winnersPage.listen(winnersHTML);
+    App.container.append(winnersHTML);
+
+  }
 
   static renderNewPage(idPage: string) {
 
@@ -18,9 +24,9 @@ class App {
     const garageHTML = garagePage.render();
     garageHTML.id = 'garage';
     garagePage.listen(garageHTML);
-    App.container.append(garageHTML)
+    App.container.append(garageHTML);
 
-    const winnersPage = new WinnersPage()
+    const winnersPage = new WinnersPage();
     const winnersHTML = winnersPage.render();
     winnersHTML.id = 'winners';
     winnersPage.listen(winnersHTML);

@@ -1,7 +1,6 @@
-import Page from '../../core/templates/pages';
-import store from '../../scripts/store';
-import UI from '../../scripts/UI';
-import { ISort, IOrder } from '../../scripts/interfaces';
+import Page from '../../templates/pages';
+import store from '../../../scripts/store';
+import UI from '../../../scripts/UI';
 
 let nextPage = false;
 let prevPage = true;
@@ -10,7 +9,6 @@ const maxPages = Math.ceil(Number(store.winnersCount) / 10)
 if (store.winnersPage >= maxPages) {
   nextPage = true;
 }
-
 
 class WinnersPage extends Page {
 

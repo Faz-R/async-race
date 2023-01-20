@@ -1,3 +1,5 @@
+import { ICar, IWinner } from "../core/interfaces/interfaces";
+
 const base = 'http://localhost:3000';
 
 const garage = `${base}/garage`;
@@ -14,7 +16,7 @@ export async function getCars(page: number, limit = 7) {
 
 export const getCar = async (id: number) => (await fetch(`${garage}/${id}`)).json();
 
-export const createCar = async (body: any) =>
+export const createCar = async (body: ICar) =>
   (await fetch(garage, {
     method: 'POST',
     body: JSON.stringify(body),
@@ -26,7 +28,7 @@ export const createCar = async (body: any) =>
 
 export const deleteCar = async (id: number) => (await fetch(`${garage}/${id}`, { method: 'DELETE' })).json();
 
-export const updateCar = async (id: number, body: any) =>
+export const updateCar = async (id: number, body: ICar) =>
   (await fetch(`${garage}/${id}`, {
     method: 'PUT',
     body: JSON.stringify(body),
@@ -45,7 +47,7 @@ export const drive = async (id: number) => {
   return res.status !== 200 ? { success: false } : { ...(await res.json()) };
 }
 
-const getSortOrder = (sort: any, order: any) => {
+const getSortOrder = (sort: string | null, order: string | null) => {
   if (sort && order) return `&_sort=${sort}&_order=${order}`;
   return '';
 }
@@ -54,7 +56,7 @@ export const getWinners = async ({ page, limit = 10, sort, order }: { page: numb
   const response = await fetch(`${winners}?_page=${page}&_limit=${limit}${getSortOrder(sort, order)}`);
   const items = await response.json();
   return {
-    items: await Promise.all(items.map(async (winner: any) => ({ ...winner, car: await getCar(winner.id) }))),
+    items: await Promise.all(items.map(async (winner: IWinner) => ({ ...winner, car: await getCar(winner.id) }))),
     count: response.headers.get('X-Total-count')
   }
 }
@@ -65,7 +67,7 @@ export const getWinnerStatus = async (id: number) => (await fetch(`${winners}/${
 
 export const deleteWinner = async (id: number) => (await fetch(`${winners}/${id}`, { method: 'DELETE' })).json();
 
-export const createWinner = async (body: any) => (await fetch(`${winners}`, {
+export const createWinner = async (body: IWinner) => (await fetch(`${winners}`, {
   method: 'POST',
   body: JSON.stringify(body),
   headers: {
@@ -73,7 +75,7 @@ export const createWinner = async (body: any) => (await fetch(`${winners}`, {
   }
 })).json();
 
-export const updateWinner = async (id: number, body: any) => (await fetch(`${winners}/${id}`, {
+export const updateWinner = async (id: number, body: IWinner) => (await fetch(`${winners}/${id}`, {
   method: 'PUT',
   body: JSON.stringify(body),
   headers: {
@@ -81,7 +83,9 @@ export const updateWinner = async (id: number, body: any) => (await fetch(`${win
   }
 })).json();
 
-export const saveWinner = async ({ id, time }: { id: number, time: number }) => {
+export const saveWinner = async ({ id, time }: {
+  color: string; id: number; name: string; time: number;
+}) => {
   const winnerStatus = await getWinnerStatus(id);
 
   if (winnerStatus === 404) {

@@ -1,8 +1,9 @@
-import Page from '../../core/templates/pages';
-import store from '../../scripts/store';
-import { generateRandomCars, race } from '../../scripts/utils';
-import UI, { updateStateGarage } from '../../scripts/UI';
-import { createCar, updateCar, deleteCar, saveWinner, deleteWinner } from '../../scripts/api';
+import Page from '../../templates/pages';
+import store from '../../../scripts/store';
+import { generateRandomCars, race } from '../../../scripts/utils';
+import UI, { updateStateGarage } from '../../../scripts/UI';
+import { createCar, updateCar, deleteCar, saveWinner, deleteWinner } from '../../../scripts/api';
+import App from '../app/index';
 
 let formUpdateLock = true;
 
@@ -64,6 +65,7 @@ class GaragePage extends Page {
           await deleteWinner(id);
           await updateStateGarage();
           await UI.updateStateWinners();
+          App.updateWinners();
           this.render();
         }
         if ((<HTMLElement>parent).className.includes('select-button')) {
@@ -119,6 +121,8 @@ class GaragePage extends Page {
           const winner = await race(UI.startDriving);
           await saveWinner(winner);
           await UI.updateStateWinners();
+          App.updateWinners();
+
           const message = document.getElementById('message');
           if (message) {
             message.innerHTML = `${winner.name} went first ${winner.time}s!`;
@@ -140,11 +144,17 @@ class GaragePage extends Page {
 
     page.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const form = (<HTMLFormElement>e?.target);
+      const formData = new FormData(form);
+      let name = formData.get('form-text') as string;
+      let color = formData.get('form-color') as string;
 
-      const formData = new FormData(<HTMLFormElement>e.target);
-
-      const name = formData.get('form-text');
-      const color = formData.get('form-color');
+      if (!name) {
+        name = '';
+      }
+      if (!color) {
+        color = '#000000';
+      }
       const car = { name: name, color: color };
 
       if ((<HTMLElement>e.target).className.includes('create-block')) {

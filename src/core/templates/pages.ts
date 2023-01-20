@@ -13,7 +13,7 @@ abstract class Page {
   }
 
   listen(container: HTMLElement) {
-    return;
+    container;
   }
 }
 
