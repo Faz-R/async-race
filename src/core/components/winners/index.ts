@@ -56,8 +56,7 @@ class WinnersPage extends Page {
   }
 
   listen(container: HTMLElement) {
-    const page = container;
-    page.addEventListener('click', async (e) => {
+    container.addEventListener('click', async (e) => {
       const parent = (<HTMLElement>e.target).parentNode;
       const element = (<HTMLElement>e.target);
       if ((<HTMLElement>parent).className.includes('page-next')) {
@@ -82,14 +81,12 @@ class WinnersPage extends Page {
           this.render();
         }
       }
-
       if (element.id === 'sort-by-wins') {
         store.sortBy = 'wins';
         (store.sortOrder === 'DESC') ? store.sortOrder = "ASC" : store.sortOrder = "DESC";
         await UI.updateStateWinners();
         this.render();
       }
-
       if (element.id === 'sort-by-time') {
         store.sortBy = 'time';
         (store.sortOrder === 'DESC') ? store.sortOrder = "ASC" : store.sortOrder = "DESC";

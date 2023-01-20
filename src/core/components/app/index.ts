@@ -18,7 +18,7 @@ class App {
 
   }
 
-  static renderNewPage(idPage: string) {
+  static renderPages(idPage: string) {
 
     const garagePage = new GaragePage();
     const garageHTML = garagePage.render();
@@ -41,7 +41,6 @@ class App {
     } else {
       winnersHTML.style.display = 'none';
     }
-
   }
 
   static hiddenPage(idPage: string) {
@@ -52,7 +51,6 @@ class App {
       (<HTMLElement>document.getElementById(`winners`)).style.display = 'block';
       (<HTMLElement>document.getElementById(`garage`)).style.display = 'none';
     }
-
   }
 
   private enableRouteChange() {
@@ -69,7 +67,7 @@ class App {
   run() {
     const hash = window.location.hash.slice(1);
     App.container.append(this.header.render())
-    App.renderNewPage(hash ? hash : 'garage');
+    App.renderPages(hash ? hash : 'garage');
     this.enableRouteChange();
   }
 }

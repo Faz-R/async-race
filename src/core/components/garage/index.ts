@@ -53,9 +53,8 @@ class GaragePage extends Page {
   }
 
   listen(container: HTMLElement) {
-    const page = container;
     let id: number;
-    page.addEventListener('click', async (e) => {
+    container.addEventListener('click', async (e) => {
       const parent = (<HTMLElement>e.target).parentNode;
       const element = (<HTMLElement>e.target);
       if (parent) {
@@ -142,7 +141,7 @@ class GaragePage extends Page {
       }
     })
 
-    page.addEventListener('submit', async (e) => {
+    container.addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = (<HTMLFormElement>e?.target);
       const formData = new FormData(form);
