@@ -2,7 +2,9 @@ import Page from '../../templates/pages';
 import store from '../../../scripts/store';
 import { generateRandomCars, race } from '../../../scripts/utils';
 import UI, { updateStateGarage } from '../../../scripts/UI';
-import { createCar, updateCar, deleteCar, saveWinner, deleteWinner } from '../../../scripts/api';
+import {
+  createCar, updateCar, deleteCar, saveWinner, deleteWinner,
+} from '../../../scripts/api';
 import App from '../app/index';
 
 let formUpdateLock = true;
@@ -16,15 +18,13 @@ if (store.carsPage < maxPages) {
 }
 
 class GaragePage extends Page {
-
   static TextObject = {
     GarageTitle: 'Garage',
   };
 
   render() {
     const title = GaragePage.TextObject.GarageTitle;
-    this.container.innerHTML =
-      `
+    this.container.innerHTML = `
     <div class='message-block' id='message'></div>
     <form class="create-block block">
       <input type='text' class='input create-text' name='form-text'>
@@ -53,38 +53,37 @@ class GaragePage extends Page {
   }
 
   listen(container: HTMLElement) {
-    let id: number;
+    let idCar: number;
     container.addEventListener('click', async (e) => {
       const parent = (<HTMLElement>e.target).parentNode;
       const element = (<HTMLElement>e.target);
       if (parent) {
         if ((<HTMLElement>parent).className.includes('remove-button')) {
-          const id = Number((<HTMLElement>parent).id.replace('remove-car-', ''));
-          await deleteCar(id);
-          await deleteWinner(id);
+          const CarId = Number((<HTMLElement>parent).id.replace('remove-car-', ''));
+          await deleteCar(CarId);
+          await deleteWinner(CarId);
           await updateStateGarage();
           await UI.updateStateWinners();
           App.updateWinners();
           this.render();
         }
         if ((<HTMLElement>parent).className.includes('select-button')) {
-          id = Number((<HTMLElement>parent).id.replace('select-car-', ''));
+          idCar = Number((<HTMLElement>parent).id.replace('select-car-', ''));
           formUpdateLock = false;
           this.render();
         }
         if ((<HTMLElement>parent).className.includes('start-button')) {
-          id = Number((<HTMLElement>parent).id.replace('start-engine-car-', ''));
-          await UI.startDriving(id);
+          idCar = Number((<HTMLElement>parent).id.replace('start-engine-car-', ''));
+          await UI.startDriving(idCar);
         }
         if ((<HTMLElement>parent).className.includes('stop-button')) {
-          id = Number((<HTMLElement>parent).id.replace('stop-engine-car-', ''));
-          await UI.stopDriving(id);
+          idCar = Number((<HTMLElement>parent).id.replace('stop-engine-car-', ''));
+          await UI.stopDriving(idCar);
         }
         if ((<HTMLElement>parent).className.includes('page-next')) {
-          const maxPages = Math.ceil(Number(store.carsCount) / 7)
           if (store.carsPage < maxPages) {
             prevPage = false;
-            store.carsPage = store.carsPage + 1;
+            store.carsPage += 1;
             if (store.carsPage === maxPages) {
               nextPage = true;
             }
@@ -95,7 +94,7 @@ class GaragePage extends Page {
         if ((<HTMLElement>parent).className.includes('page-prev')) {
           if (store.carsPage > 1) {
             nextPage = false;
-            store.carsPage = store.carsPage - 1;
+            store.carsPage -= 1;
             if (store.carsPage === 1) {
               prevPage = true;
             }
@@ -108,11 +107,11 @@ class GaragePage extends Page {
         if (element.className.includes('generate-button')) {
           const cars = generateRandomCars();
           nextPage = false;
-          cars.forEach(async (e) => {
-            await createCar(e);
+          cars.forEach(async (elems) => {
+            await createCar(elems);
             await updateStateGarage();
             this.render();
-          })
+          });
         }
         if (element.className.includes('race-button')) {
           (<HTMLButtonElement>element).disabled = true;
@@ -136,10 +135,9 @@ class GaragePage extends Page {
           const message = document.getElementById('message');
           message?.classList.toggle('visible', false);
           (<HTMLButtonElement>document.getElementById('race')).disabled = false;
-
         }
       }
-    })
+    });
 
     container.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -154,22 +152,19 @@ class GaragePage extends Page {
       if (!color) {
         color = '#000000';
       }
-      const car = { name: name, color: color };
+      const car = { name, color };
 
       if ((<HTMLElement>e.target).className.includes('create-block')) {
         await createCar(car);
       }
       if ((<HTMLElement>e.target).className.includes('update-block')) {
-        await updateCar(id, car);
+        await updateCar(idCar, car);
         formUpdateLock = true;
       }
       await updateStateGarage();
       this.render();
-
-    })
-
+    });
   }
 }
-
 
 export default GaragePage;

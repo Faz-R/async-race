@@ -1,5 +1,6 @@
 abstract class Page {
   protected container: HTMLElement;
+
   static TextObject = {
 
   };
@@ -10,10 +11,6 @@ abstract class Page {
 
   render() {
     return this.container;
-  }
-
-  listen(container: HTMLElement) {
-    container;
   }
 }
 

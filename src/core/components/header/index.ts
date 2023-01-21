@@ -4,19 +4,15 @@ import { PageIds } from '../../interfaces/interfaces';
 const Buttons = [
   {
     id: PageIds.GaragePage,
-    text: 'Garage'
+    text: 'Garage',
   },
   {
     id: PageIds.WinnersPage,
-    text: 'Winners'
-  }
-]
+    text: 'Winners',
+  },
+];
 
 class Header extends Components {
-  constructor(tagName: string, clasName: string) {
-    super(tagName, clasName);
-  }
-
   renderPageButtons() {
     const pageButtons = document.createElement('div');
     pageButtons.className = 'header-buttons';
@@ -26,7 +22,7 @@ class Header extends Components {
       buttonHTML.innerText = button.text;
       buttonHTML.className = 'header-button button';
       pageButtons.append(buttonHTML);
-    })
+    });
     this.container.append(pageButtons);
   }
 

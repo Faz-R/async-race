@@ -1,23 +1,17 @@
 import Page from '../../templates/pages';
 import store from '../../../scripts/store';
 import UI from '../../../scripts/UI';
-
-// let nextPage = false;
-// let prevPage = true;
-
-// const maxPages = Math.ceil(Number(store.winnersCount) / 10)
-// if (store.winnersPage >= maxPages) {
-//   nextPage = true;
-// }
+import { getSort } from '../../../scripts/utils';
 
 class WinnersPage extends Page {
-
   static TextObject = {
     WinnersTitle: 'Winners',
   };
 
   nextPage = false;
+
   prevPage = true;
+
   maxPages = Math.ceil(Number(store.winnersCount) / 10);
 
   render() {
@@ -25,6 +19,7 @@ class WinnersPage extends Page {
       this.nextPage = true;
     }
     const title = WinnersPage.TextObject.WinnersTitle;
+
     this.container.innerHTML = `
     <h1>${title} (${store.winnersCount})</h1>
     <div class='pagination'>
@@ -39,23 +34,21 @@ class WinnersPage extends Page {
         <th class='table-col-head'>Name</th>
         <th class='table-col-head col-wins' id='sort-by-wins'>
           Wins 
-          ${store.sortBy === 'wins' ? store.sortOrder === 'DESC' ? '▼' : '▲' : ''}
+          ${getSort('wins')}
         </th>
         <th class='table-col-head col-time' id='sort-by-time'>
           Best time(s) 
-          ${store.sortBy === 'time' ? store.sortOrder === 'DESC' ? '▼' : '▲' : ''}
+          ${getSort('time')}
         </th>
       </tr>
       <tbody>
-      ${store.winners.map((winner, index) =>
-      `<tr class='table-row'>
+      ${store.winners.map((winner, index) => `<tr class='table-row'>
         <td class='table-col'>${index + 1 + ((store.winnersPage - 1) * 10)}</td>
         <td class='table-col col-img'>${UI.renderCarImage(winner.car.color)}</td>
         <td class='table-col'>${winner.car.name}</td>
         <td class='table-col'>${winner.wins}</td>
         <td class='table-col'>${winner.time}</td>
-      </tr>`
-    ).join('')}
+      </tr>`).join('')}
       </tbody>
     </table>
     `;
@@ -69,7 +62,7 @@ class WinnersPage extends Page {
       if ((<HTMLElement>parent).className.includes('page-next')) {
         if (store.winnersPage < this.maxPages) {
           this.prevPage = false;
-          store.winnersPage = store.winnersPage + 1;
+          store.winnersPage += 1;
           if (store.winnersPage === this.maxPages) {
             this.nextPage = true;
           }
@@ -80,7 +73,7 @@ class WinnersPage extends Page {
       if ((<HTMLElement>parent).className.includes('page-prev')) {
         if (store.winnersPage > 1) {
           this.nextPage = false;
-          store.winnersPage = store.winnersPage - 1;
+          store.winnersPage -= 1;
           if (store.winnersPage === 1) {
             this.prevPage = true;
           }
@@ -90,18 +83,17 @@ class WinnersPage extends Page {
       }
       if (element.id === 'sort-by-wins') {
         store.sortBy = 'wins';
-        (store.sortOrder === 'DESC') ? store.sortOrder = "ASC" : store.sortOrder = "DESC";
+        store.sortOrder = (store.sortOrder === 'DESC') ? 'ASC' : 'DESC';
         await UI.updateStateWinners();
         this.render();
       }
       if (element.id === 'sort-by-time') {
         store.sortBy = 'time';
-        (store.sortOrder === 'DESC') ? store.sortOrder = "ASC" : store.sortOrder = "DESC";
+        store.sortOrder = (store.sortOrder === 'DESC') ? 'ASC' : 'DESC';
         await UI.updateStateWinners();
         this.render();
       }
-
-    })
+    });
   }
 }
 

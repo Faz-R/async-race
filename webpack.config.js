@@ -1,3 +1,6 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-shadow */
+/* eslint-disable global-require */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
 const path = require('path');
@@ -6,9 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const EslingPlugin = require('eslint-webpack-plugin');
 
-const isProduction = process.env.NODE_ENV == 'production';
-
-const stylesHandler = isProduction ? MiniCssExtractPlugin.loader : 'style-loader';
+const isProduction = process.env.NODE_ENV === 'production';
 
 const pages = ['main'];
 
@@ -126,8 +127,8 @@ const config = {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '...'],
   },
   experiments: {
-    topLevelAwait: true
-  }
+    topLevelAwait: true,
+  },
 };
 
 module.exports = () => {

@@ -1,5 +1,7 @@
-export const enum PageIds {
+export enum PageIds {
+  // eslint-disable-next-line no-unused-vars
   GaragePage = 'garage',
+  // eslint-disable-next-line no-unused-vars
   WinnersPage = 'winners',
 }
 
