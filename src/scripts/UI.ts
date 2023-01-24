@@ -14,10 +14,10 @@ const renderCar = ({
 }: { id: number, name: string, color: string, isEngineStarted: boolean }) => `
 <div class='car-block'>
   <div class='car-settings'>
-    <button class="button select-button fa-solid fa-check" id="select-car-${id}"><i class="fa-solid fa-check"></i></button>
-    <button class="button remove-button" id="remove-car-${id}"><i class="fa-solid fa-xmark"></i></button>
-    <button class="button start-button" id="start-engine-car-${id}" ${isEngineStarted ? 'disabled' : ''}><i class="fa-solid fa-play"></i></button>
-    <button class="button stop-button" id="stop-engine-car-${id}" ${!isEngineStarted ? 'disabled' : ''}><i class="fa-solid fa-arrow-rotate-left"></i></button>
+    <button class="button select-button fa-solid fa-check" id="select-car-${id}">Select</button>
+    <button class="button remove-button" id="remove-car-${id}">Delete</button>
+    <button class="button start-button" id="start-engine-car-${id}" ${isEngineStarted ? 'disabled' : ''}>Start</button>
+    <button class="button stop-button" id="stop-engine-car-${id}" ${!isEngineStarted ? 'disabled' : ''}>Stop</button>
     <span class='car-name'>${name}</span>
   </div>
   <div class='road'>

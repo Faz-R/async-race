@@ -17,8 +17,6 @@
 
 .car-block .button{
   font-size: 12px;
-  width: 10px;
-  height: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -35,13 +33,13 @@
   width: 100%;
   border-bottom: 3px dashed #000;
   position: relative;
-  padding-top: 40px;
+  padding-top: 60px;
 }
 
 .car{
   position: absolute;
   left: 0;
-  top: -10px;
+  top: 10px;
 }
 
 .flag{

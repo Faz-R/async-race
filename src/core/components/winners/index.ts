@@ -56,31 +56,32 @@ class WinnersPage extends Page {
   }
 
   listen(container: HTMLElement) {
+    container.querySelector('.page-prev')?.addEventListener('click', async () => {
+      if (store.winnersPage > 1) {
+        this.nextPage = false;
+        store.winnersPage -= 1;
+        if (store.winnersPage === 1) {
+          this.prevPage = true;
+        }
+        await UI.updateStateWinners();
+        this.render();
+      }
+    });
+
+    container.querySelector('.page-next')?.addEventListener('click', async () => {
+      if (store.winnersPage < this.maxPages) {
+        this.prevPage = false;
+        store.winnersPage += 1;
+        if (store.winnersPage === this.maxPages) {
+          this.nextPage = true;
+        }
+        await UI.updateStateWinners();
+        this.render();
+      }
+    });
+
     container.addEventListener('click', async (e) => {
-      const parent = (<HTMLElement>e.target).parentNode;
       const element = (<HTMLElement>e.target);
-      if ((<HTMLElement>parent).className.includes('page-next')) {
-        if (store.winnersPage < this.maxPages) {
-          this.prevPage = false;
-          store.winnersPage += 1;
-          if (store.winnersPage === this.maxPages) {
-            this.nextPage = true;
-          }
-          await UI.updateStateWinners();
-          this.render();
-        }
-      }
-      if ((<HTMLElement>parent).className.includes('page-prev')) {
-        if (store.winnersPage > 1) {
-          this.nextPage = false;
-          store.winnersPage -= 1;
-          if (store.winnersPage === 1) {
-            this.prevPage = true;
-          }
-          await UI.updateStateWinners();
-          this.render();
-        }
-      }
       if (element.id === 'sort-by-wins') {
         store.sortBy = 'wins';
         store.sortOrder = (store.sortOrder === 'DESC') ? 'ASC' : 'DESC';
