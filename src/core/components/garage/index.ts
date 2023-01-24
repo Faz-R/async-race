@@ -53,7 +53,7 @@ class GaragePage extends Page {
   }
 
   listen(container: HTMLElement) {
-    let idCar: number;
+    let idCar: number | null;
     container.querySelector('.page-next')?.addEventListener('click', async () => {
       const maxPages = Math.ceil(Number(store.carsCount) / 7);
       if (store.carsPage < maxPages) {
@@ -128,6 +128,10 @@ class GaragePage extends Page {
           await updateStateGarage();
           await UI.updateStateWinners();
           App.updateWinners();
+          if (store.carsPage > Math.ceil(Number(store.carsCount) / 7)) {
+            store.carsPage -= 1;
+            await updateStateGarage();
+          }
           this.render();
           this.listen(this.render());
         }
@@ -167,11 +171,15 @@ class GaragePage extends Page {
         await createCar(car);
       }
       if ((<HTMLElement>e.target).className.includes('update-block')) {
-        await updateCar(idCar, car);
+        if (idCar) {
+          await updateCar(idCar, car);
+        }
+        idCar = null;
         formUpdateLock = true;
       }
       await updateStateGarage();
       this.render();
+      this.listen(this.render());
     });
   }
 }
