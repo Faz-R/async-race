@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import store from './store';
 import { ICar } from '../core/interfaces/interfaces';
 
@@ -79,14 +80,12 @@ export const raceAll = async (
   return { ...store.cars.find((car: ICar) => car.id === id), time: +(time / 1000).toFixed(2) };
 };
 
-export const race = async (
-  // eslint-disable-next-line no-unused-vars
-  action: (id: number) => Promise<{ success: boolean; id: number; time: number; }>,
-): Promise<{
-  color: string; id: number; name: string; time: number;
-}> => {
+export const race = async (action: (id: number, isRace?: boolean) =>
+  Promise<{ success: boolean; id: number; time: number; }>, isRace?: boolean): Promise<{
+    color: string; id: number; name: string; time: number;
+  }> => {
   const promises: Promise<{ success: boolean; id: number; time: number; }>[] = store.cars.map(
-    ({ id }: { id: number }) => action(id),
+    ({ id }: { id: number }) => action(id, isRace),
   );
   const winner = await raceAll(promises, store.cars.map((car: ICar) => car.id));
   return winner;
@@ -100,4 +99,17 @@ export function getSort(sort: string) {
     return '▲';
   }
   return '';
+}
+
+export function getDisabled(array: Element[]): Element[] {
+  array.forEach((e) => {
+    const elem = e;
+    if ((<HTMLButtonElement>elem).disabled === true) {
+      (<HTMLButtonElement>elem).disabled = false;
+    } else {
+      (<HTMLButtonElement>elem).disabled = true;
+    }
+    return elem;
+  });
+  return array;
 }

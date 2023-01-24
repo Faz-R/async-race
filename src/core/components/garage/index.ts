@@ -1,6 +1,6 @@
 import Page from '../../templates/pages';
 import store from '../../../scripts/store';
-import { generateRandomCars, race } from '../../../scripts/utils';
+import { generateRandomCars, race, getDisabled } from '../../../scripts/utils';
 import UI, { updateStateGarage } from '../../../scripts/UI';
 import {
   createCar, updateCar, deleteCar, saveWinner, deleteWinner,
@@ -97,10 +97,20 @@ class GaragePage extends Page {
 
       const prevBtn = <HTMLButtonElement>document.querySelector('.page-prev');
       const nextBtn = <HTMLButtonElement>document.querySelector('.page-next');
+      const selectBtn = document.querySelectorAll('.select-button');
+      const removeBtn = document.querySelectorAll('.remove-button');
+      const startBtn = document.querySelectorAll('.start-button');
+      // const stopBtn = document.querySelectorAll('.stop-button');
+
       prevBtn.disabled = true;
       nextBtn.disabled = true;
+      getDisabled(Array.from(selectBtn));
+      getDisabled(Array.from(removeBtn));
+      getDisabled(Array.from(startBtn));
+      // getDisabled(Array.from(stopBtn));
+      const isRace = true;
 
-      const winner = await race(UI.startDriving);
+      const winner = await race(UI.startDriving, isRace);
       await saveWinner(winner);
       await UI.updateStateWinners();
       App.updateWinners();
@@ -114,6 +124,10 @@ class GaragePage extends Page {
       (<HTMLButtonElement>document.getElementById('reset')).disabled = false;
       prevBtn.disabled = false;
       nextBtn.disabled = false;
+      getDisabled(Array.from(selectBtn));
+      getDisabled(Array.from(removeBtn));
+      getDisabled(Array.from(startBtn));
+      // getDisabled(Array.from(stopBtn));
     });
 
     container.querySelector('.reset-button')?.addEventListener('click', async (resetE) => {

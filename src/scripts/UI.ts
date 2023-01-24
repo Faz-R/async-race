@@ -43,7 +43,7 @@ export const updateStateGarage = async () => {
   store.carsCount = count;
 };
 
-const startDriving = async (id: number) => {
+const startDriving = async (id: number, isRace?: boolean) => {
   const startButton = document.getElementById(`start-engine-car-${id}`);
   if (startButton instanceof HTMLButtonElement) {
     startButton.disabled = true;
@@ -56,7 +56,9 @@ const startDriving = async (id: number) => {
   if (startButton instanceof HTMLButtonElement) {
     startButton.disabled = true;
   }
-  (<HTMLButtonElement>document.getElementById(`stop-engine-car-${id}`)).disabled = false;
+  if (!isRace) {
+    (<HTMLButtonElement>document.getElementById(`stop-engine-car-${id}`)).disabled = false;
+  }
 
   const car = document.getElementById(`car-${id}`) as HTMLElement;
   const flag = document.getElementById(`flag-${id}`) as HTMLElement;
