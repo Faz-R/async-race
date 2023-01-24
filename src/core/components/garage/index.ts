@@ -1,6 +1,6 @@
 import Page from '../../templates/pages';
 import store from '../../../scripts/store';
-import { generateRandomCars, race, getDisabled } from '../../../scripts/utils';
+import { generateRandomCars, race } from '../../../scripts/utils';
 import UI, { updateStateGarage } from '../../../scripts/UI';
 import {
   createCar, updateCar, deleteCar, saveWinner, deleteWinner,
@@ -11,6 +11,11 @@ let formUpdateLock = true;
 
 let nextPage = true;
 let prevPage = true;
+const maxPages = Math.ceil(Number(store.carsCount) / 7);
+
+if (store.carsPage < maxPages) {
+  nextPage = false;
+}
 
 class GaragePage extends Page {
   static TextObject = {
@@ -18,11 +23,6 @@ class GaragePage extends Page {
   };
 
   render() {
-    const maxPages = Math.ceil(Number(store.carsCount) / 7);
-
-    if (store.carsPage < maxPages) {
-      nextPage = false;
-    }
     const title = GaragePage.TextObject.GarageTitle;
     this.container.innerHTML = `
     <div class='message-block' id='message'></div>
@@ -53,114 +53,23 @@ class GaragePage extends Page {
   }
 
   listen(container: HTMLElement) {
-    let idCar: number | null;
-    container.querySelector('.page-next')?.addEventListener('click', async () => {
-      const maxPages = Math.ceil(Number(store.carsCount) / 7);
-      if (store.carsPage < maxPages) {
-        prevPage = false;
-        store.carsPage += 1;
-        if (store.carsPage === maxPages) {
-          nextPage = true;
-        }
-        await updateStateGarage();
-        this.render();
-        this.listen(this.render());
-      }
-    });
-    container.querySelector('.page-prev')?.addEventListener('click', async () => {
-      if (store.carsPage > 1) {
-        nextPage = false;
-        store.carsPage -= 1;
-        if (store.carsPage === 1) {
-          prevPage = true;
-        }
-        await updateStateGarage();
-        this.render();
-        this.listen(this.render());
-      }
-    });
-
-    container.querySelector('.generate-button')?.addEventListener('click', async () => {
-      const cars = generateRandomCars();
-      nextPage = false;
-      cars.forEach(async (elems) => {
-        await createCar(elems);
-        await updateStateGarage();
-        this.render();
-        this.listen(this.render());
-      });
-    });
-
-    container.querySelector('.race-button')?.addEventListener('click', async (raceE) => {
-      const raceBnt = raceE.target;
-      (<HTMLButtonElement>raceBnt).disabled = true;
-
-      const prevBtn = <HTMLButtonElement>document.querySelector('.page-prev');
-      const nextBtn = <HTMLButtonElement>document.querySelector('.page-next');
-      const selectBtn = document.querySelectorAll('.select-button');
-      const removeBtn = document.querySelectorAll('.remove-button');
-      const startBtn = document.querySelectorAll('.start-button');
-      // const stopBtn = document.querySelectorAll('.stop-button');
-
-      prevBtn.disabled = true;
-      nextBtn.disabled = true;
-      getDisabled(Array.from(selectBtn));
-      getDisabled(Array.from(removeBtn));
-      getDisabled(Array.from(startBtn));
-      // getDisabled(Array.from(stopBtn));
-      const isRace = true;
-
-      const winner = await race(UI.startDriving, isRace);
-      await saveWinner(winner);
-      await UI.updateStateWinners();
-      App.updateWinners();
-
-      const message = document.getElementById('message');
-      if (message) {
-        message.innerHTML = `${winner.name} went first ${winner.time}s!`;
-        message.classList.toggle('visible', true);
-      }
-
-      (<HTMLButtonElement>document.getElementById('reset')).disabled = false;
-      prevBtn.disabled = false;
-      nextBtn.disabled = false;
-      getDisabled(Array.from(selectBtn));
-      getDisabled(Array.from(removeBtn));
-      getDisabled(Array.from(startBtn));
-      // getDisabled(Array.from(stopBtn));
-    });
-
-    container.querySelector('.reset-button')?.addEventListener('click', async (resetE) => {
-      const resetBtn = resetE.target;
-      (<HTMLButtonElement>resetBtn).disabled = true;
-      store.cars.map(({ id }: { id: number }) => UI.stopDriving(id));
-      const message = document.getElementById('message');
-      message?.classList.toggle('visible', false);
-      (<HTMLButtonElement>document.getElementById('race')).disabled = false;
-    });
-
-    container.querySelector('.garage-list')?.addEventListener('click', async (e) => {
-      const element = <HTMLElement>e.target;
+    let idCar: number;
+    container.addEventListener('click', async (e) => {
+      const element = (<HTMLElement>e.target);
       if (element) {
-        if (element.className.includes('remove-button')) {
+        if ((element).className.includes('remove-button')) {
           const CarId = Number((element).id.replace('remove-car-', ''));
           await deleteCar(CarId);
           await deleteWinner(CarId);
           await updateStateGarage();
           await UI.updateStateWinners();
           App.updateWinners();
-          if (store.carsPage > Math.ceil(Number(store.carsCount) / 7)) {
-            store.carsPage -= 1;
-            await updateStateGarage();
-          }
           this.render();
-          this.listen(this.render());
         }
         if ((element).className.includes('select-button')) {
           idCar = Number((element).id.replace('select-car-', ''));
           formUpdateLock = false;
           this.render();
-          this.listen(this.render());
         }
         if ((element).className.includes('start-button')) {
           idCar = Number((element).id.replace('start-engine-car-', ''));
@@ -169,6 +78,62 @@ class GaragePage extends Page {
         if ((element).className.includes('stop-button')) {
           idCar = Number((element).id.replace('stop-engine-car-', ''));
           await UI.stopDriving(idCar);
+        }
+        if ((element).className.includes('page-next')) {
+          if (store.carsPage < maxPages) {
+            prevPage = false;
+            store.carsPage += 1;
+            if (store.carsPage === maxPages) {
+              nextPage = true;
+            }
+            await updateStateGarage();
+            this.render();
+          }
+        }
+        if ((element).className.includes('page-prev')) {
+          if (store.carsPage > 1) {
+            nextPage = false;
+            store.carsPage -= 1;
+            if (store.carsPage === 1) {
+              prevPage = true;
+            }
+            await updateStateGarage();
+            this.render();
+          }
+        }
+      }
+      if (element) {
+        if (element.className.includes('generate-button')) {
+          const cars = generateRandomCars();
+          nextPage = false;
+          cars.forEach(async (elems) => {
+            await createCar(elems);
+            await updateStateGarage();
+            this.render();
+          });
+        }
+        if (element.className.includes('race-button')) {
+          (<HTMLButtonElement>element).disabled = true;
+
+          const winner = await race(UI.startDriving);
+          await saveWinner(winner);
+          await UI.updateStateWinners();
+          App.updateWinners();
+
+          const message = document.getElementById('message');
+          if (message) {
+            message.innerHTML = `${winner.name} went first ${winner.time}s!`;
+            message.classList.toggle('visible', true);
+          }
+
+          (<HTMLButtonElement>document.getElementById('reset')).disabled = false;
+        }
+        if (element.className.includes('reset-button')) {
+          (<HTMLButtonElement>element).disabled = true;
+          store.cars.map(({ id }: { id: number }) => UI.stopDriving(id));
+          const message = document.getElementById('message');
+          message?.classList.toggle('visible', false);
+          (<HTMLButtonElement>document.getElementById('race')).disabled = false;
         }
       }
     });
@@ -192,15 +157,11 @@ class GaragePage extends Page {
         await createCar(car);
       }
       if ((<HTMLElement>e.target).className.includes('update-block')) {
-        if (idCar) {
-          await updateCar(idCar, car);
-        }
-        idCar = null;
+        await updateCar(idCar, car);
         formUpdateLock = true;
       }
       await updateStateGarage();
       this.render();
-      this.listen(this.render());
     });
   }
 }
