@@ -14,7 +14,7 @@ class App {
     const winnersPage = new WinnersPage();
     const winnersHTML = winnersPage.render();
     winnersHTML.id = 'winners';
-    if (hash === 'garage') {
+    if (hash === 'garage' || hash === '') {
       winnersHTML.style.display = 'none';
     }
     winnersPage.listen(winnersHTML);
