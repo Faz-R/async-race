@@ -95,6 +95,11 @@ class GaragePage extends Page {
       const raceBnt = raceE.target;
       (<HTMLButtonElement>raceBnt).disabled = true;
 
+      const prevBtn = <HTMLButtonElement>document.querySelector('.page-prev');
+      const nextBtn = <HTMLButtonElement>document.querySelector('.page-next');
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+
       const winner = await race(UI.startDriving);
       await saveWinner(winner);
       await UI.updateStateWinners();
@@ -107,6 +112,8 @@ class GaragePage extends Page {
       }
 
       (<HTMLButtonElement>document.getElementById('reset')).disabled = false;
+      prevBtn.disabled = false;
+      nextBtn.disabled = false;
     });
 
     container.querySelector('.reset-button')?.addEventListener('click', async (resetE) => {
