@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "target": "es2017",
+    "allowJs": true,
+    "strict": true,
+  },
+  "files": ["src/pages/main/main.ts"],
+  "lib": [
+    "dom",
+    "dom.iterable",
+    "esnext"
+  ],
+}

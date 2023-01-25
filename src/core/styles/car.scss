@@ -1,0 +1,49 @@
+.garage-list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.car-block{
+  margin-bottom: 30px;
+}
+
+.car-settings{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 0.5em;
+}
+
+.car-block .button{
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  font-size: 16px;
+}
+
+.car-name{
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.road{
+  width: 100%;
+  border-bottom: 3px dashed #000;
+  position: relative;
+  padding-top: 60px;
+}
+
+.car{
+  position: absolute;
+  left: 0;
+  top: 10px;
+}
+
+.flag{
+  position: absolute;
+  right: 100px;
+  bottom: 0;
+}

@@ -1,0 +1,50 @@
+.table {
+	max-width: 500px;
+  width: 100%;
+	border: none;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #ddd;
+  border-collapse: collapse;
+	font-size: 16px;
+}
+.table-col-head {
+	font-weight: bold;
+	text-align: left;
+	border: none;
+	padding: 10px 15px;
+	background: #d8d8d8;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+.table-col {
+	text-align: left;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	padding: 10px 15px;
+	vertical-align: middle;
+}
+.table-row:nth-child(even){
+	background: #f3f3f3;	
+}
+
+.col-img{
+	padding: 0 15px;
+}
+
+.col-img svg{
+	height: 50px;
+}
+
+.col-wins, .col-time{
+	cursor: pointer;
+	margin-right: 20px;
+}
+
+.col-wins{
+	min-width: 60px;
+}
+
+.col-time{
+	min-width: 101px;
+
+}
