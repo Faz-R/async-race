@@ -72,8 +72,21 @@ class GaragePage extends Page {
           this.render();
         }
         if (element.closest('.start-button')) {
+          (<HTMLButtonElement>document.querySelector('.stop-button')).disabled = false;
+          if ((<HTMLButtonElement>document.querySelector('.page-prev')).disabled === false) {
+            (<HTMLButtonElement>document.querySelector('.page-prev')).disabled = true;
+          }
+
+          if ((<HTMLButtonElement>document.querySelector('.page-next')).disabled === false) {
+            (<HTMLButtonElement>document.querySelector('.page-next')).disabled = true;
+          }
+
           idCar = Number((element).id.replace('start-engine-car-', ''));
           await UI.startDriving(idCar);
+          if (store.carsPage > 1) {
+            (<HTMLButtonElement>document.querySelector('.page-prev')).disabled = false;
+          }
+          (<HTMLButtonElement>document.querySelector('.page-next')).disabled = false;
         }
         if (element.closest('.stop-button')) {
           idCar = Number((element).id.replace('stop-engine-car-', ''));
@@ -121,6 +134,7 @@ class GaragePage extends Page {
           getDisabled(Array.from(document.querySelectorAll('.start-button')));
           (<HTMLButtonElement>document.querySelector('.page-prev')).disabled = true;
           (<HTMLButtonElement>document.querySelector('.page-next')).disabled = true;
+          (<HTMLButtonElement>document.querySelector('.generate-button')).disabled = true;
 
           const winner = await race(UI.startDriving, true);
           await saveWinner(winner);
@@ -139,6 +153,7 @@ class GaragePage extends Page {
           getDisabled(Array.from(document.querySelectorAll('.stop-button')));
           (<HTMLButtonElement>document.querySelector('.page-prev')).disabled = false;
           (<HTMLButtonElement>document.querySelector('.page-next')).disabled = false;
+          (<HTMLButtonElement>document.querySelector('.generate-button')).disabled = false;
 
           (<HTMLButtonElement>document.getElementById('reset')).disabled = false;
         }

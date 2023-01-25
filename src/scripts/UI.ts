@@ -45,6 +45,9 @@ export const updateStateGarage = async () => {
 
 const startDriving = async (id: number, isRace?: boolean) => {
   const startButton = document.getElementById(`start-engine-car-${id}`);
+  if (<HTMLButtonElement>document.getElementById(`stop-engine-car-${id}`)) {
+    (<HTMLButtonElement>document.getElementById(`stop-engine-car-${id}`)).disabled = false;
+  }
   if (startButton instanceof HTMLButtonElement) {
     startButton.disabled = true;
   }
@@ -83,7 +86,10 @@ const stopDriving = async (id: number) => {
   }
   await stopEngine(id);
 
-  (<HTMLButtonElement>document.getElementById(`start-engine-car-${id}`)).disabled = false;
+  if ((<HTMLButtonElement>document.getElementById(`start-engine-car-${id}`))) {
+    (<HTMLButtonElement>document.getElementById(`start-engine-car-${id}`)).disabled = false;
+  }
+
   const car = document.getElementById(`car-${id}`);
   if (car) {
     car.style.transform = 'translateX(0)';
