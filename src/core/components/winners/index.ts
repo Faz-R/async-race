@@ -23,9 +23,9 @@ class WinnersPage extends Page {
     this.container.innerHTML = `
     <h1>${title} (${store.winnersCount})</h1>
     <div class='pagination'>
-      <button class='page-prev button' ${this.prevPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>
+      <button class='winners-page-prev button' ${this.prevPage ? 'disabled = \'true\'' : ''} id='winners-prev'>❮</button>
       <div>Page: ${store.winnersPage}</div>
-      <button class='page-next button' ${this.nextPage ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>
+      <button class='winners-page-next button' ${this.nextPage ? 'disabled = \'true\'' : ''} id='winners-next'>❯</button>
     </div>
     <table class='table'>
       <tr class='table-row head-row'>
@@ -56,32 +56,32 @@ class WinnersPage extends Page {
   }
 
   listen(container: HTMLElement) {
-    container.querySelector('.page-prev')?.addEventListener('click', async () => {
-      if (store.winnersPage > 1) {
-        this.nextPage = false;
-        store.winnersPage -= 1;
-        if (store.winnersPage === 1) {
-          this.prevPage = true;
-        }
-        await UI.updateStateWinners();
-        this.render();
-      }
-    });
-
-    container.querySelector('.page-next')?.addEventListener('click', async () => {
-      if (store.winnersPage < this.maxPages) {
-        this.prevPage = false;
-        store.winnersPage += 1;
-        if (store.winnersPage === this.maxPages) {
-          this.nextPage = true;
-        }
-        await UI.updateStateWinners();
-        this.render();
-      }
-    });
-
     container.addEventListener('click', async (e) => {
+      // const parent = (<HTMLElement>e.target).parentNode;
       const element = (<HTMLElement>e.target);
+      if (element.closest('.winners-page-next')) {
+        if (store.winnersPage < this.maxPages) {
+          this.prevPage = false;
+          store.winnersPage += 1;
+          if (store.winnersPage === this.maxPages) {
+            this.nextPage = true;
+          }
+          await UI.updateStateWinners();
+          this.render();
+        }
+      }
+
+      if (element.closest('.winners-page-prev')) {
+        if (store.winnersPage > 1) {
+          this.nextPage = false;
+          store.winnersPage -= 1;
+          if (store.winnersPage === 1) {
+            this.prevPage = true;
+          }
+          await UI.updateStateWinners();
+          this.render();
+        }
+      }
       if (element.id === 'sort-by-wins') {
         store.sortBy = 'wins';
         store.sortOrder = (store.sortOrder === 'DESC') ? 'ASC' : 'DESC';

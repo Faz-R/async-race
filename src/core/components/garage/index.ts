@@ -1,6 +1,6 @@
 import Page from '../../templates/pages';
 import store from '../../../scripts/store';
-import { generateRandomCars, race } from '../../../scripts/utils';
+import { generateRandomCars, getDisabled, race } from '../../../scripts/utils';
 import UI, { updateStateGarage } from '../../../scripts/UI';
 import {
   createCar, updateCar, deleteCar, saveWinner, deleteWinner,
@@ -31,10 +31,10 @@ class GaragePage extends Page {
       <input type='color' class='input input-color create-color' name='form-color'>
       <button class="button" id='create-button'>create</button>
     </form>
-    <form class="update-block block" ${formUpdateLock ? 'disabled' : ''}>
-      <input type='text' class='input' name='form-text' ${formUpdateLock ? 'disabled' : ''}>
-      <input type='color' class='input input-color' name='form-color' ${formUpdateLock ? 'disabled' : ''}>
-      <button class="button update-button" ${formUpdateLock ? 'disabled' : ''}>update</button>
+    <form class="update-block block" ${formUpdateLock ? 'disabled = \'true\'' : ''}>
+      <input type='text' class='input' name='form-text' ${formUpdateLock ? 'disabled = \'true\'' : ''}>
+      <input type='color' class='input input-color' name='form-color' ${formUpdateLock ? 'disabled = \'true\'' : ''}>
+      <button class="button update-button" ${formUpdateLock ? 'disabled = \'true\'' : ''}>update</button>
     </form>
     <div class="race-block block">
       <button class="button race-button" id="race">race</button>
@@ -43,9 +43,9 @@ class GaragePage extends Page {
     </div>
     <h1>${title} (${store.carsCount})</h1>
     <div class='pagination'>
-      <button class='page-prev button' ${prevPage ? 'disabled' : ''} id='prev-garage-page'><i class="fa-solid fa-chevron-left"></i></button>
+      <button class='page-prev button' ${prevPage ? 'disabled = \'true\'' : ''} id='prev-garage-page'>❮</button>
       <div>Page: ${store.carsPage}</div>
-      <button class='page-next button' ${nextPage ? 'disabled' : ''} id='next-garage-page'><i class="fa-solid fa-chevron-right"></i></button>
+      <button class='page-next button' ${nextPage ? 'disabled = \'true\'' : ''} id='next-garage-page'>❯</button>
     </div>
     ${UI.renderGarage()}
     `;
@@ -57,7 +57,7 @@ class GaragePage extends Page {
     container.addEventListener('click', async (e) => {
       const element = (<HTMLElement>e.target);
       if (element) {
-        if ((element).className.includes('remove-button')) {
+        if (element.closest('.remove-button')) {
           const CarId = Number((element).id.replace('remove-car-', ''));
           await deleteCar(CarId);
           await deleteWinner(CarId);
@@ -66,20 +66,20 @@ class GaragePage extends Page {
           App.updateWinners();
           this.render();
         }
-        if ((element).className.includes('select-button')) {
+        if (element.closest('.select-button')) {
           idCar = Number((element).id.replace('select-car-', ''));
           formUpdateLock = false;
           this.render();
         }
-        if ((element).className.includes('start-button')) {
+        if (element.closest('.start-button')) {
           idCar = Number((element).id.replace('start-engine-car-', ''));
           await UI.startDriving(idCar);
         }
-        if ((element).className.includes('stop-button')) {
+        if (element.closest('.stop-button')) {
           idCar = Number((element).id.replace('stop-engine-car-', ''));
           await UI.stopDriving(idCar);
         }
-        if ((element).className.includes('page-next')) {
+        if (element.closest('.page-next')) {
           if (store.carsPage < maxPages) {
             prevPage = false;
             store.carsPage += 1;
@@ -90,7 +90,7 @@ class GaragePage extends Page {
             this.render();
           }
         }
-        if ((element).className.includes('page-prev')) {
+        if (element.closest('.page-prev')) {
           if (store.carsPage > 1) {
             nextPage = false;
             store.carsPage -= 1;
@@ -103,7 +103,7 @@ class GaragePage extends Page {
         }
       }
       if (element) {
-        if (element.className.includes('generate-button')) {
+        if (element.closest('.generate-button')) {
           const cars = generateRandomCars();
           nextPage = false;
           cars.forEach(async (elems) => {
@@ -112,10 +112,16 @@ class GaragePage extends Page {
             this.render();
           });
         }
-        if (element.className.includes('race-button')) {
+        if (element.closest('.race-button')) {
           (<HTMLButtonElement>element).disabled = true;
 
-          const winner = await race(UI.startDriving);
+          getDisabled(Array.from(document.querySelectorAll('.remove-button')));
+          getDisabled(Array.from(document.querySelectorAll('.select-button')));
+          getDisabled(Array.from(document.querySelectorAll('.start-button')));
+          (<HTMLButtonElement>document.querySelector('.page-prev')).disabled = true;
+          (<HTMLButtonElement>document.querySelector('.page-next')).disabled = true;
+
+          const winner = await race(UI.startDriving, true);
           await saveWinner(winner);
           await UI.updateStateWinners();
           App.updateWinners();
@@ -126,9 +132,16 @@ class GaragePage extends Page {
             message.classList.toggle('visible', true);
           }
 
+          getDisabled(Array.from(document.querySelectorAll('.remove-button')));
+          getDisabled(Array.from(document.querySelectorAll('.select-button')));
+          getDisabled(Array.from(document.querySelectorAll('.start-button')));
+          getDisabled(Array.from(document.querySelectorAll('.stop-button')));
+          (<HTMLButtonElement>document.querySelector('.page-prev')).disabled = false;
+          (<HTMLButtonElement>document.querySelector('.page-next')).disabled = false;
+
           (<HTMLButtonElement>document.getElementById('reset')).disabled = false;
         }
-        if (element.className.includes('reset-button')) {
+        if (element.closest('.reset-button')) {
           (<HTMLButtonElement>element).disabled = true;
           store.cars.map(({ id }: { id: number }) => UI.stopDriving(id));
           const message = document.getElementById('message');
@@ -153,10 +166,10 @@ class GaragePage extends Page {
       }
       const car = { name, color };
 
-      if ((<HTMLElement>e.target).className.includes('create-block')) {
+      if ((<HTMLElement>e.target).closest('.create-block')) {
         await createCar(car);
       }
-      if ((<HTMLElement>e.target).className.includes('update-block')) {
+      if ((<HTMLElement>e.target).closest('.update-block')) {
         await updateCar(idCar, car);
         formUpdateLock = true;
       }

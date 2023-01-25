@@ -56,8 +56,8 @@ const startDriving = async (id: number, isRace?: boolean) => {
   if (startButton instanceof HTMLButtonElement) {
     startButton.disabled = true;
   }
-  if (!isRace) {
-    (<HTMLButtonElement>document.getElementById(`stop-engine-car-${id}`)).disabled = false;
+  if (isRace) {
+    (<HTMLButtonElement>document.getElementById(`stop-engine-car-${id}`)).disabled = true;
   }
 
   const car = document.getElementById(`car-${id}`) as HTMLElement;
