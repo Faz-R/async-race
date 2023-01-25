@@ -11,11 +11,7 @@ let formUpdateLock = true;
 
 let nextPage = true;
 let prevPage = true;
-const maxPages = Math.ceil(Number(store.carsCount) / 7);
-
-if (store.carsPage < maxPages) {
-  nextPage = false;
-}
+// const maxPages = Math.ceil(Number(store.carsCount) / 7);
 
 class GaragePage extends Page {
   static TextObject = {
@@ -24,6 +20,10 @@ class GaragePage extends Page {
 
   render() {
     const title = GaragePage.TextObject.GarageTitle;
+    const maxPages = Math.ceil(Number(store.carsCount) / 7);
+    if (store.carsPage < maxPages) {
+      nextPage = false;
+    }
     this.container.innerHTML = `
     <div class='message-block' id='message'></div>
     <form class="create-block block">
@@ -80,6 +80,7 @@ class GaragePage extends Page {
           await UI.stopDriving(idCar);
         }
         if (element.closest('.page-next')) {
+          const maxPages = Math.ceil(Number(store.carsCount) / 7);
           if (store.carsPage < maxPages) {
             prevPage = false;
             store.carsPage += 1;
